@@ -142,6 +142,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 camera.setFaceDetected(1);
                 camera.setFaceImage(os.toByteArray());
 
+                DETECT_RUNNING = false;
+
             }
         };
 
