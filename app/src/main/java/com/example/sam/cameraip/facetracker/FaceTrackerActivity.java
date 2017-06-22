@@ -139,8 +139,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 CameraConfig camera = CameraConfig.getInstance();
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 tmp.compress(Bitmap.CompressFormat.JPEG, 100, os);
-                camera.setFaceDetected(1);
-                camera.setFaceImage(os.toByteArray());
+//                camera.setFaceDetected(1);
+                camera.addPicture(os.toByteArray());
 
                 DETECT_RUNNING = false;
 
@@ -243,8 +243,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * rest of the processing pipeline.
      */
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         if (mCameraSource != null) {
             mCameraSource.release();
         }
