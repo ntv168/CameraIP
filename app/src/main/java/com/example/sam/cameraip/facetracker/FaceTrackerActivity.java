@@ -137,7 +137,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 CameraConfig camera = CameraConfig.getInstance();
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 tmp.compress(Bitmap.CompressFormat.JPEG, 100, os);
-//                camera.setFaceDetected(1);
+                camera.setFaceDetected(1);
 //                while (camera.getPictureQueue().size() > 3 ){
 //                    try {
 //                        camera.getPictureQueue().take();
@@ -354,7 +354,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... param) {
             try {
                 synchronized (this) {
-                    wait(7000);
+                    wait(5000);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -395,7 +395,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 FaceTrackerActivity.this.CURRENT_FACE_ID = faceId;
                 inTime = true;
                 new WaitforNextTakePickture().execute();
-
             }
         }
 
