@@ -138,13 +138,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 tmp.compress(Bitmap.CompressFormat.JPEG, 100, os);
 //                camera.setFaceDetected(1);
-                while (camera.getPictureQueue().size() > 3 ){
-                    try {
-                        camera.getPictureQueue().take();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                while (camera.getPictureQueue().size() > 3 ){
+//                    try {
+//                        camera.getPictureQueue().take();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
                 Log.d(TAG,"added-------");
                 camera.addPicture(os.toByteArray());
 
@@ -354,7 +354,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... param) {
             try {
                 synchronized (this) {
-                    wait(5000);
+                    wait(7000);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
