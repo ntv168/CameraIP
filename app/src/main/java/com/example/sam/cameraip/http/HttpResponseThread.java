@@ -29,7 +29,7 @@ public class HttpResponseThread extends Thread {
     public void run() {
         BufferedReader is;
         PrintWriter os;
-        String request;
+        String request = "";
 
 
         try {
@@ -37,23 +37,26 @@ public class HttpResponseThread extends Thread {
             request = is.readLine();
             Log.d(TAG,request);
             //kiem tra request url
-            String response = null;
-            CameraConfig camera = CameraConfig.getInstance();
-            if (camera.getFaceDetected() > 0) {
-                String encoded = Base64.encodeToString(camera.getFaceImage(), Base64.NO_WRAP);
-                response = encoded;
-            }
-            else {
-                response = "No body home";
-            }
+            String response = "";
             os = new PrintWriter(socket.getOutputStream(), true);
+            if (request != null ) {
+                if (request.contains("/camera")) {
+                    CameraConfig camera = CameraConfig.getInstance();
 
-
-
-
-
-
-
+                    if (camera.getPictureQueue().size() > 0) {
+                        byte[] picture = camera.getPictureQueue().take();
+                        String encoded = Base64.encodeToString(picture, Base64.NO_WRAP);
+                        response = encoded;
+                    }
+                    else {
+                        response = "Nobody";
+                    }
+                } else if (request.contains("/get")) {
+                    response = "";
+                } else if (request.contains("/check")) {
+                    response = "";
+                }
+            }
             os.print("HTTP/1.0 200" + "\r\n");
             os.print("Content type: text/html" + "\r\n");
             os.print("Content length: " + response.length() + "\r\n");
@@ -63,6 +66,8 @@ public class HttpResponseThread extends Thread {
             socket.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
