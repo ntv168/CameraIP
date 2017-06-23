@@ -27,6 +27,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 
@@ -142,14 +143,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 camera.setFaceDetected(1);
                 camera.setFaceImage(os.toByteArray());
 
-                DETECT_RUNNING = false;
+                FaceTrackerActivity.this.DETECT_RUNNING = false;
 
             }
         };
 
     }
-
-
 
 
 
@@ -350,6 +349,32 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * Face tracker for each detectingindividual. This maintains a face graphic within the app's
      * associated face overlay.
      */
+
+    boolean inTime = false;
+
+
+    private class WaitforNextTakePickture extends AsyncTask<String , Integer, Boolean> {
+        protected Boolean doInBackground(String... param) {
+            try {
+                synchronized (this) {
+                    wait(5000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            inTime = true;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            inTime = result;
+        }
+    }
+
+
     private class GraphicFaceTracker extends Tracker<Face> {
         private GraphicOverlay mOverlay;
         private FaceGraphic mFaceGraphic;
@@ -359,6 +384,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             mFaceGraphic = new FaceGraphic(overlay);
         }
 
+
+
         /**
          * Start tracking the detectingface instance within the face overlay.
          */
@@ -366,9 +393,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         public void onNewItem(int faceId, Face item) {
             mFaceGraphic.setId(faceId);
 
-            if (!FaceTrackerActivity.this.DETECT_RUNNING && FaceTrackerActivity.this.CURRENT_FACE_ID <= faceId) {
+            if (!FaceTrackerActivity.this.DETECT_RUNNING && FaceTrackerActivity.this.CURRENT_FACE_ID < faceId && !inTime ) {
                 mCameraSource.takePicture(null, mCallBack);
                 FaceTrackerActivity.this.CURRENT_FACE_ID = faceId;
+                inTime = true;
+                new WaitforNextTakePickture().execute();
+
             }
         }
 
