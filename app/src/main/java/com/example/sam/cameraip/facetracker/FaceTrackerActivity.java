@@ -121,7 +121,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             @Override
             public void onPictureTaken(byte[] data) {
                 FaceTrackerActivity.this.DETECT_RUNNING = true;
-                showMessage("camera data length: "+ data.length);
 
                 //Rezise bitmap
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -133,13 +132,19 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                     tmp = Bitmap.createScaledBitmap(tmp, 300, 300, false);
 
                 }
-
-
                 //respone image base64
                 CameraConfig camera = CameraConfig.getInstance();
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 tmp.compress(Bitmap.CompressFormat.JPEG, 100, os);
 //                camera.setFaceDetected(1);
+                while (camera.getPictureQueue().size() > 3 ){
+                    try {
+                        camera.getPictureQueue().take();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d(TAG,"added-------");
                 camera.addPicture(os.toByteArray());
 
                 DETECT_RUNNING = false;
@@ -202,21 +207,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                         .build());
 
         if (!detector.isOperational()) {
-            // Note: The first time that an app using face API is installed on a device, GMS will
-            // download a native library to the device in order to do detection.  Usually this
-            // completes before the app is run for the first time.  But if that download has not yet
-            // completed, then the above call will not detect any faces.
-            //
-            // isOperational() can be used to check if the required native library is currently
-            // available.  The detector will automatically become operational once the library
-            // download completes on device.
             Log.w(TAG, "Face detector dependencies are not yet available.");
         }
 
         mCameraSource = new CameraSource.Builder(context, detector)
                 .setRequestedPreviewSize(640, 480)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedFps(30.0f)
+                .setRequestedFps(8.0f)
                 .build();
     }
 
