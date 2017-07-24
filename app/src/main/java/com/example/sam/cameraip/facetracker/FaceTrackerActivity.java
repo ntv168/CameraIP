@@ -146,7 +146,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 //                    }
 //                }
                 Log.d(TAG,"added-------");
-                camera.addPicture(os.toByteArray());
+                camera.setFaceImage(os.toByteArray());
 
                 FaceTrackerActivity.this.DETECT_RUNNING = false;
 

@@ -35,7 +35,7 @@ public class HttpResponseThread extends Thread {
         try {
             is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             request = is.readLine();
-            Log.d(TAG,request);
+            Log.d(TAG,request+"");
             //kiem tra request url
             String response = "";
             os = new PrintWriter(socket.getOutputStream(), true);
@@ -43,10 +43,11 @@ public class HttpResponseThread extends Thread {
                 if (request.contains("/camera")) {
                     CameraConfig camera = CameraConfig.getInstance();
 
-                    if (camera.getPictureQueue().size() > 0) {
-                        byte[] picture = camera.getPictureQueue().take();
+                    if (camera.getFaceImage() != null) {
+                        byte[] picture = camera.getFaceImage();
                         String encoded = Base64.encodeToString(picture, Base64.NO_WRAP);
                         response = encoded;
+                        camera.setFaceImage(null);
                     }
                     else {
                         response = "Nobody";
@@ -67,10 +68,7 @@ public class HttpResponseThread extends Thread {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-
         return;
     }
 }
